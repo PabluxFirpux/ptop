@@ -66,5 +66,5 @@ int main(int argc, char *argv[]) {
     printf("PROCESSES:\n");
     list_process();
 
-    //TODO call /proc/PID/statm for each process, make struct wi
+    //TODO call /proc/PID/statm for each process, make struct with info
 }
