@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <dirent.h>
+#include <ncurses.h>
 #include "libs/String.h"
 
 #define BYTESIZE "kb"
@@ -57,7 +58,23 @@ void load_MemData() {
     memUsed = memTotal-memAvailable;
 }
 
+void screen() {
+    initscr();
+    load_MemData();
+    printw("Memory total: %d %s\n", memTotal, BYTESIZE);
+    printw("Memory Free: %d %s\n", memFree, BYTESIZE);
+    printw("Memory Available: %d %s\n", memAvailable, BYTESIZE);
+    printw("Memory Used: %d %s\n", memUsed, BYTESIZE);
+    refresh();			/* Print it on to the real screen */
+    getch();/* Wait for user input */
+    endwin();
+}
+
 int main(int argc, char *argv[]) {
+    screen();
+    return 0;
+
+
     load_MemData();
     printf("Memory total: %d %s\n", memTotal, BYTESIZE);
     printf("Memory Free: %d %s\n", memFree, BYTESIZE);
@@ -66,5 +83,6 @@ int main(int argc, char *argv[]) {
     printf("PROCESSES:\n");
     list_process();
 
-    //TODO call /proc/PID/statm for each process, make struct with info
+    return 0;
+    //TODO: call /proc/PID/statm for each process, make struct with info
 }

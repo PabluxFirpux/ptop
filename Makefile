@@ -1,4 +1,4 @@
-CFLAGS = -Wall -pedantic -g
+CFLAGS = -Wall -pedantic -g -lncursesw
 
 LIBDIR = libs/
 SRC = main.o $(LIBDIR)String.o
@@ -9,10 +9,10 @@ all: $(TARGET)
 	./$(TARGET)
 
 $(TARGET): $(SRC)
-	gcc $(CFLAGS) $(SRC) -o $(TARGET)
+	gcc $(SRC) -o $(TARGET) $(CFLAGS)
 
 %.o : %.c
-	gcc -c $(CFLAGS) $? -o $@
+	gcc -c $? -o $@ $(CFLAGS)
 
 clean :
 	@echo "Removing trash"
