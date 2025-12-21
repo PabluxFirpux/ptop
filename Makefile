@@ -1,7 +1,7 @@
 CFLAGS = -Wall -pedantic -g -lncursesw
 
 LIBDIR = libs/
-SRC = main.o $(LIBDIR)String.o
+SRC = main.o $(LIBDIR)String.o screen.o
 
 TARGET = ptop
 
