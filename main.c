@@ -10,6 +10,7 @@
 #include <string.h>
 #include "libs/String.h"
 #include "screen.h"
+#include "proces.h"
 
 #define BYTESIZE "kb"
 int memTotal, memFree, memUsed, memAvailable;
@@ -58,6 +59,7 @@ void load_MemData() {
 
     //Calculate memUsed
     memUsed = memTotal-memAvailable;
+    fclose(f);
 }
 
 void screen() {
@@ -73,7 +75,12 @@ void screen() {
 }
 
 int main(int argc, char *argv[]) {
-    test_Colors();
+    //test_Colors();
+    int id = 1522;
+    Proces* pproces = PROCES_getProces(id);
+    printf("Process ID: %d\n", pproces->id);
+    printf("Mem: %d %d %d\n", pproces->sizeInKB, pproces->resSizeInKB, pproces->shareSizeInKB);
+    free(pproces);
     return 0;
 
 
