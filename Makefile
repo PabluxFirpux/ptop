@@ -6,7 +6,7 @@ SRC = main.o $(LIBDIR)String.o screen.o proces.o
 TARGET = ptop
 
 all: $(TARGET)
-	./$(TARGET)
+	./$(TARGET) 1522
 
 $(TARGET): $(SRC)
 	gcc $(SRC) -o $(TARGET) $(CFLAGS)

@@ -2,36 +2,15 @@
 // Created by pabluxfirpux on 12/20/25.
 //
 
-#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <dirent.h>
 #include <ncurses.h>
-#include <string.h>
 #include "libs/String.h"
 #include "screen.h"
 #include "proces.h"
 
 #define BYTESIZE "kb"
 int memTotal, memFree, memUsed, memAvailable;
-
-void list_process() {
-    struct dirent *entry;
-    DIR* dir = opendir("/proc");
-    if (dir == NULL) {
-        printf("Error opening /proc");
-        exit(1);
-    }
-
-    while ((entry = readdir(dir)) != NULL) {
-        char* name = entry->d_name;
-        if (!isdigit(name[0])) {
-            continue;
-        }
-        printf("%s\n", name);
-    }
-}
-
 
 void load_MemData() {
     char* filename = "/proc/meminfo";
@@ -74,23 +53,40 @@ void screen() {
     endwin();
 }
 
+void print_procInfo(Proces *pproces) {
+    if (!pproces) {
+        return;
+    }
+    printf("Process ID: %d\n", pproces->id);
+    printf("Name: %s\n", pproces->name);
+    printf("Mem: %d %d %d\n", pproces->sizeInKB, pproces->resSizeInKB, pproces->shareSizeInKB);
+}
+
 int main(int argc, char *argv[]) {
     //test_Colors();
-    int id = 1522;
-    Proces* pproces = PROCES_getProces(id);
-    printf("Process ID: %d\n", pproces->id);
-    printf("Mem: %d %d %d\n", pproces->sizeInKB, pproces->resSizeInKB, pproces->shareSizeInKB);
-    free(pproces);
-    return 0;
+    if (argc != 2) {
+        printf("Usage: ./ptop <process id>\n");
+        return 1;
+    }
+    int id = atoi(argv[1]);
 
+    Proces** pproces_list;
+    PROCES_list_process(pproces_list);
+    for (int i = 0; i<30; i++) {
+        if (pproces_list[i] == NULL || pproces_list[i] == 0) {
+            continue;
+        }
+        print_procInfo(pproces_list[i]);
+    }
+    free(pproces_list);
+    return 0;
 
     load_MemData();
     printf("Memory total: %d %s\n", memTotal, BYTESIZE);
     printf("Memory Free: %d %s\n", memFree, BYTESIZE);
     printf("Memory Available: %d %s\n", memAvailable, BYTESIZE);
     printf("Memory Used: %d %s\n", memUsed, BYTESIZE);
-    printf("PROCESSES:\n");
-    list_process();
+
 
     return 0;
     //TODO: call /proc/PID/statm for each process, make struct with info
