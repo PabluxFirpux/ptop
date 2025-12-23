@@ -2,34 +2,15 @@
 // Created by pabluxfirpux on 12/20/25.
 //
 
-#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <dirent.h>
 #include <ncurses.h>
-#include <string.h>
 #include "libs/String.h"
+#include "screen.h"
+#include "proces.h"
 
 #define BYTESIZE "kb"
 int memTotal, memFree, memUsed, memAvailable;
-
-void list_process() {
-    struct dirent *entry;
-    DIR* dir = opendir("/proc");
-    if (dir == NULL) {
-        printf("Error opening /proc");
-        exit(1);
-    }
-
-    while ((entry = readdir(dir)) != NULL) {
-        char* name = entry->d_name;
-        if (!isdigit(name[0])) {
-            continue;
-        }
-        printf("%s\n", name);
-    }
-}
-
 
 void load_MemData() {
     char* filename = "/proc/meminfo";
@@ -57,6 +38,7 @@ void load_MemData() {
 
     //Calculate memUsed
     memUsed = memTotal-memAvailable;
+    fclose(f);
 }
 
 void screen() {
@@ -71,58 +53,40 @@ void screen() {
     endwin();
 }
 
-
-
-void print_in_middle(WINDOW *win, int starty, int startx, int width, char *string)
-{	int length, x, y;
-    float temp;
-
-    if(win == NULL)
-        win = stdscr;
-    getyx(win, y, x);
-    if(startx != 0)
-        x = startx;
-    if(starty != 0)
-        y = starty;
-    if(width == 0)
-        width = 80;
-
-    length = strlen(string);
-    temp = (width - length)/ 2;
-    x = startx + (int)temp;
-    mvwprintw(win, y, x, "%s", string);
-    refresh();
-}
-
-void test_Colors() {	initscr();			/* Start curses mode 		*/
-    if(has_colors() == FALSE)
-    {	endwin();
-        printf("Your terminal does not support color\n");
-        exit(1);
+void print_procInfo(Proces *pproces) {
+    if (!pproces) {
+        return;
     }
-    start_color();			/* Start color 			*/
-    init_pair(1, COLOR_RED, COLOR_WHITE);
-
-    attron(COLOR_PAIR(1));
-    print_in_middle(stdscr, LINES / 2, 0, 0, "Viola !!! In color ...");
-    attroff(COLOR_PAIR(1));
-    getch();
-    endwin();
+    printf("Process ID: %d\n", pproces->id);
+    printf("Name: %s\n", pproces->name);
+    printf("Mem: %d %d %d\n", pproces->sizeInKB, pproces->resSizeInKB, pproces->shareSizeInKB);
 }
-
 
 int main(int argc, char *argv[]) {
-    test_Colors();
-    return 0;
+    //test_Colors();
+    if (argc != 2) {
+        printf("Usage: ./ptop <process id>\n");
+        return 1;
+    }
+    int id = atoi(argv[1]);
 
+
+    ProcList* pproces_list = PROCES_list_process();
+    for (int i = 0; i < pproces_list->length; i++) {
+        if (pproces_list->procesList[i] == NULL || pproces_list->procesList[i] == 0) {
+            continue;
+        }
+        print_procInfo(pproces_list->procesList[i]);
+    }
+    free(pproces_list);
+    return 0;
 
     load_MemData();
     printf("Memory total: %d %s\n", memTotal, BYTESIZE);
     printf("Memory Free: %d %s\n", memFree, BYTESIZE);
     printf("Memory Available: %d %s\n", memAvailable, BYTESIZE);
     printf("Memory Used: %d %s\n", memUsed, BYTESIZE);
-    printf("PROCESSES:\n");
-    list_process();
+
 
     return 0;
     //TODO: call /proc/PID/statm for each process, make struct with info
