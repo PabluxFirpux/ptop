@@ -48,8 +48,8 @@ void screen() {
     printw("Memory Free: %d %s\n", memFree, BYTESIZE);
     printw("Memory Available: %d %s\n", memAvailable, BYTESIZE);
     printw("Memory Used: %d %s\n", memUsed, BYTESIZE);
-    refresh();			/* Print it on to the real screen */
-    getch();/* Wait for user input */
+    refresh();
+    getch();
     endwin();
 }
 
@@ -63,7 +63,6 @@ void print_procInfo(Proces *pproces) {
 }
 
 int main(int argc, char *argv[]) {
-    //test_Colors();
     if (argc != 2) {
         printf("Usage: ./ptop <process id>\n");
         return 1;
@@ -80,14 +79,5 @@ int main(int argc, char *argv[]) {
     }
     free(pproces_list);
     return 0;
-
-    load_MemData();
-    printf("Memory total: %d %s\n", memTotal, BYTESIZE);
-    printf("Memory Free: %d %s\n", memFree, BYTESIZE);
-    printf("Memory Available: %d %s\n", memAvailable, BYTESIZE);
-    printf("Memory Used: %d %s\n", memUsed, BYTESIZE);
-
-
-    return 0;
-    //TODO: call /proc/PID/statm for each process, make struct with info
+    //TODO: add more info to proc struct
 }
