@@ -33,7 +33,7 @@ int number_of_proceses() {
     return proces_count;
 }
 
-void PROCES_list_process(Proces** proces_list_to_fill) {
+ProcList* PROCES_list_process() {
     struct dirent *entry;
     DIR* dir = opendir("/proc");
     if (dir == NULL) {
@@ -42,7 +42,9 @@ void PROCES_list_process(Proces** proces_list_to_fill) {
     }
 
     int proces_count = number_of_proceses();
-    proces_list_to_fill = malloc(proces_count * sizeof(Proces));
+    ProcList* plist = malloc(sizeof(ProcList));
+    plist->procesList = malloc(proces_count * sizeof(Proces));
+    plist->length = proces_count;
 
     int i = -1;
     while ((entry = readdir(dir)) != NULL) {
@@ -51,9 +53,13 @@ void PROCES_list_process(Proces** proces_list_to_fill) {
             continue;
         }
         i++;
+        if (i >= plist->length) {
+            break;
+        }
         int id = atoi(name);
-        proces_list_to_fill[i] = PROCES_getProces(id);
+        plist->procesList[i] = PROCES_getProces(id);
     }
+    return plist;
 }
 
 int turnPageIntoKB(int sizeInPages, int pagesizeInBytes) {

@@ -70,13 +70,13 @@ int main(int argc, char *argv[]) {
     }
     int id = atoi(argv[1]);
 
-    Proces** pproces_list;
-    PROCES_list_process(pproces_list);
-    for (int i = 0; i<30; i++) {
-        if (pproces_list[i] == NULL || pproces_list[i] == 0) {
+
+    ProcList* pproces_list = PROCES_list_process();
+    for (int i = 0; i < pproces_list->length; i++) {
+        if (pproces_list->procesList[i] == NULL || pproces_list->procesList[i] == 0) {
             continue;
         }
-        print_procInfo(pproces_list[i]);
+        print_procInfo(pproces_list->procesList[i]);
     }
     free(pproces_list);
     return 0;

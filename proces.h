@@ -13,7 +13,12 @@ typedef struct {
     char name[256];
 } Proces;
 
-void PROCES_list_process(Proces** proces_list_to_fill);
+typedef struct {
+    Proces** procesList;
+    int length;
+} ProcList;
+
+ProcList* PROCES_list_process();
 Proces* PROCES_getProces(int id);
 
 #endif //PTOP_PROCES_H
